@@ -75,7 +75,18 @@ a {
     background-color: lightblue;
     justify-content: center;
     font-size: 14px;
+    
 }
+
+.manipulation .NoMoreRoles{
+    background-color: rgb(189, 227, 252);
+}
+
+.manipulation .hover:hover{
+    background-color: lightskyblue;
+    cursor: pointer;
+}
+
 .info h3{
     color: #3f3f3f;
 }
@@ -88,6 +99,8 @@ a {
 
 .ability{
     font-size: 25pxpx;
+    /* cursor: pointer;  */
+    /* cursor可以让鼠标在上面的时候变成点击 */
 }
 
 .ability_detail{
@@ -96,6 +109,5 @@ a {
     font-size: 16px;
 }
 
-.manipulation button:hover{
-    background-color: lightskyblue;
-}
+
+
