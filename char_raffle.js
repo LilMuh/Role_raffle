@@ -189,21 +189,43 @@ const num_wailai =environment[ppl][1];
 const num_zhaoya =environment[ppl][2];
 const num_emo =environment[ppl][3];
 
+function get_random(max, min){
+    return Math.floor(Math.random()*(max-min))+min
+};
+
 // 随机阵营 (祈福功能即将上线)
 function get_group(role){
-    let i = Number(String(Math.random()*(role.length-min)).charAt(0));
+    let i = get_random(role.length,min);
     let group = role[i+min];
-    console.log(group);
+    // 保险：防止角色都被抽光了 infinite loop
+    if(role.length===0){
+
+        const next_btn = document.querySelector('#next');
+        next_btn.innerHTML='角色抽光了'
+        next_btn.className='NoMoreRoles'
+
+    }
+
+    while(group.length===0){
+        let i = get_random(role.length,min); 
+        let group = role[i+min];
+    }
     return group
 }
 let group = get_group(role);
 
 // 随机身份
 function get_shenfen(group){
-    let i = Number(String(Math.random()*(group.length-min)).charAt(0));
+    let i = get_random(group.length,min);
     const shenfen =group[i+min];
-    const remove = group.indexOf(shenfen);
+    let remove = group.indexOf(shenfen);
+    // 抽完身份就删掉这个数据
     if(remove>-1){group.splice(remove,1)}
+    // 如果阵营角色被抽完就删掉这个阵营
+    if(group.length===0){
+        let remove = role.indexOf(group);
+        if(remove>-1){role.splice(remove,1)}
+    }
     return shenfen
 }
 let shenfen =get_shenfen(group);
@@ -226,8 +248,8 @@ function fresh(random_shenfen, x1, x2, x3, x4){
         </div>
     </div>
     <div class="manipulation">
-        <button id="next">下一个</button>
-        <button id="end">结束分配</button>
+        <button class='hover' id="next">下一个</button>
+        <button class='hover' id="end">结束分配</button>
     </div>`)
 }
 
@@ -235,7 +257,24 @@ function fresh(random_shenfen, x1, x2, x3, x4){
 fresh(shenfen, num_cunmin, num_wailai, num_zhaoya, num_emo);
 
 // 点击下一个时再次生成(not working)
+// 09.17 update: 完善eventlistner by querySelector
 
-const next = document.getElementById("next");
+const next = document.querySelector("#next");
 
-next.addEventListener("click", console.log(1));
+next.addEventListener('click', function(){
+    // 随机一个新身份
+    group = get_group(role);
+    shenfen =get_shenfen(group);
+    // 选取新身份信息
+    role_name = document.querySelector('.role_name')
+    role_id = document.querySelector('.role_id')
+    role_abi = document.querySelector('.ability_detail')
+    // 修改页面身份信息
+    role_name.innerHTML = shenfen.name;
+    role_id.innerHTML = `(${shenfen.zhenying}阵营，${shenfen.identity})`
+    role_abi.innerHTML = shenfen.ability;
+    role_name.style.color = shenfen.color;
+})
+
+// 待完善：根据游戏配置，选择每个阵营能出的角色；结束后弹出每位玩家身份信息
+// 更多功能请留言
