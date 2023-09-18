@@ -1,7 +1,9 @@
 // 询问说书人本局玩家人数
+// Ask for the number of players
 const ppl = prompt('请输入玩家人数');
 
 // 阵营人数配置
+// Table for the role settings regarding to the number of players
 const environment={
     5:[3, 0, 1, 1],
     6:[3, 1, 1, 1],
@@ -17,6 +19,7 @@ const environment={
 };
 
 // 角色表
+// role table
 let cunmin = [
     {
         name: '洗衣妇',
@@ -184,27 +187,21 @@ const num_role = role.length; // === max
 const min = 0;
 
 // 人数参数
-const num_cunmin =environment[ppl][0];
-const num_wailai =environment[ppl][1];
-const num_zhaoya =environment[ppl][2];
-const num_emo =environment[ppl][3];
+// role settings
+const num_each_group = environment[ppl]
 
+// random function: get random number
 function get_random(max, min){
     return Math.floor(Math.random()*(max-min))+min
 };
 
 // 随机阵营 (祈福功能即将上线)
+// get random group
 function get_group(role){
     let i = get_random(role.length,min);
     let group = role[i+min];
-    // 保险：防止角色都被抽光了 infinite loop
-    if(role.length===0){
-
-        const next_btn = document.querySelector('#next');
-        next_btn.innerHTML='角色抽光了'
-        next_btn.className='NoMoreRoles'
-
-    }
+    
+    
 
     while(group.length===0){
         let i = get_random(role.length,min); 
@@ -215,23 +212,41 @@ function get_group(role){
 let group = get_group(role);
 
 // 随机身份
+// get random role
 function get_shenfen(group){
     let i = get_random(group.length,min);
     const shenfen =group[i+min];
     let remove = group.indexOf(shenfen);
     // 抽完身份就删掉这个数据
+    // delete raffled role from list
     if(remove>-1){group.splice(remove,1)}
     // 如果阵营角色被抽完就删掉这个阵营
+    // delete group if no roles in the group
     if(group.length===0){
         let remove = role.indexOf(group);
         if(remove>-1){role.splice(remove,1)}
     }
+    // 保险：防止角色都被抽光了 
+    // prevent from infinite loop
+    if(role.length===0){
+
+        const next_btn = document.querySelector('#next');
+        next_btn.innerHTML='角色抽光了'
+        next_btn.className='NoMoreRoles'
+        next_btn.disabled=true
+
+    }
     return shenfen
 }
-let shenfen =get_shenfen(group);
+let shenfen = get_shenfen(group);
 
 // 打印页面
-function fresh(random_shenfen, x1, x2, x3, x4){
+// function for render initial page
+function fresh(random_shenfen, arr){
+    const x1 = arr[0];
+    const x2 = arr[1];
+    const x3 = arr[2];
+    const x4 = arr[3];
     document.write(`
     <div class="role_box">
         <div class="game_info" style="margin-top: 10px; margin-bottom: -10px;"><strong>本局设置为：</strong>${x1}镇民 ${x2}外来者 ${x3}爪牙 ${x4}恶魔</div>
@@ -254,7 +269,8 @@ function fresh(random_shenfen, x1, x2, x3, x4){
 }
 
 // 生成
-fresh(shenfen, num_cunmin, num_wailai, num_zhaoya, num_emo);
+// render page
+fresh(shenfen, num_each_group);
 
 // 点击下一个时再次生成(not working)
 // 09.17 update: 完善eventlistner by querySelector
@@ -278,3 +294,4 @@ next.addEventListener('click', function(){
 
 // 待完善：根据游戏配置，选择每个阵营能出的角色；结束后弹出每位玩家身份信息
 // 更多功能请留言
+// leave messages for more features
